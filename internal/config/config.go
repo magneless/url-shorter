@@ -9,15 +9,15 @@ import (
 )
 
 type Config struct {
-	Env        string     `json:"env" env-required:"true"`
-	Storage    string     `json:"storage_path" env-required:"true"`
-	HTTPServer HTTPServer `json:"http_server"`
+	Env        string     `yaml:"env" env-required:"true"`
+	Storage    string     `yaml:"storage_path" env-required:"true"`
+	HTTPServer HTTPServer `yaml:"http_server"`
 }
 
 type HTTPServer struct {
-	Address     string            `json:"address" env-required:"true"`
-	Timeout     time.Duration `json:"timeout" env-required:"false"`
-	IdleTimeout time.Duration `json:"idle_timeout" env-required:"false"`
+	Address     string        `yaml:"address" env-required:"true"`
+	Timeout     time.Duration `yaml:"timeout" env-required:"false"`
+	IdleTimeout time.Duration `yaml:"idle_timeout" env-required:"false"`
 }
 
 func MustLoad() *Config {
@@ -35,6 +35,6 @@ func MustLoad() *Config {
 	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
 		log.Fatalf("cannot read config: %s", err)
 	}
-	
+
 	return &cfg
 }
