@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/magneless/url-shorter/internal/config"
+	"github.com/magneless/url-shorter/internal/lib/logger/sl"
+	"github.com/magneless/url-shorter/internal/storage/sqlite"
 )
 
 const (
@@ -21,8 +23,13 @@ func main() {
 	log.Info("starting url-shorter", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
 
-	// TODO: init storage:
+	storage, err := sqlite.New(cfg.Storage)
+	if err != nil {
+		log.Error("failed to init storage", sl.Err(err))
+		os.Exit(1)
+	}
 
+	_ = storage
 	// TODO: init router: net/http
 
 	// TODO: run server
