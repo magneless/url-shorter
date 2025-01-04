@@ -4,7 +4,10 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/magneless/url-shorter/internal/config"
+	mwLogger "github.com/magneless/url-shorter/internal/http-server/middleware/logger"
 	"github.com/magneless/url-shorter/internal/lib/logger/sl"
 	"github.com/magneless/url-shorter/internal/storage/sqlite"
 )
@@ -29,8 +32,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	// TODO: init router: net/http
+	router := chi.NewRouter()
 
+	router.Use(middleware.RequestID)
+	router.Use(mwLogger.New(log))
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
+
+	_ = storage
 	// TODO: run server
 }
 
