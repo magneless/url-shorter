@@ -2,11 +2,13 @@ package main
 
 import (
 	"log/slog"
+	"net/http"
 	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/magneless/url-shorter/internal/config"
+	"github.com/magneless/url-shorter/internal/http-server/handlers/url/save"
 	mwLogger "github.com/magneless/url-shorter/internal/http-server/middleware/logger"
 	"github.com/magneless/url-shorter/internal/lib/logger/sl"
 	"github.com/magneless/url-shorter/internal/storage/sqlite"
@@ -39,8 +41,25 @@ func main() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 
-	_ = storage
-	// TODO: run server
+
+	router.Post("/url", save.New(log, storage))
+
+	log.Info("starting server", slog.String("address", cfg.HTTPServer.Address))
+
+
+	srv := &http.Server{
+		Addr: cfg.HTTPServer.Address,
+		Handler: router,
+		ReadTimeout: cfg.HTTPServer.Timeout,
+		WriteTimeout: cfg.HTTPServer.Timeout,
+		IdleTimeout: cfg.HTTPServer.IdleTimeout,
+	}
+
+	if err := srv.ListenAndServe(); err != nil {
+		log.Error("failed to start server")
+	}
+
+	log.Error("server stopped")
 }
 
 func setupLogger(env string) *slog.Logger {
