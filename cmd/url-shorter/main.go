@@ -8,6 +8,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/magneless/url-shorter/internal/config"
+	"github.com/magneless/url-shorter/internal/http-server/handlers/delete/deleteurl"
+	"github.com/magneless/url-shorter/internal/http-server/handlers/redirect"
 	"github.com/magneless/url-shorter/internal/http-server/handlers/url/save"
 	mwLogger "github.com/magneless/url-shorter/internal/http-server/middleware/logger"
 	"github.com/magneless/url-shorter/internal/lib/logger/sl"
@@ -41,18 +43,25 @@ func main() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 
+	router.Route("/url", func(r chi.Router) {
+		r.Use(middleware.BasicAuth("url-shorter", map[string]string{
+			cfg.HTTPServer.User: cfg.HTTPServer.Password,
+		}))
 
-	router.Post("/url", save.New(log, storage))
+		r.Post("/", save.New(log, storage))
+		r.Delete("/{alias}", deleteurl.New(log, storage))
+	})
+
+	router.Get("/{alias}", redirect.New(log, storage))
 
 	log.Info("starting server", slog.String("address", cfg.HTTPServer.Address))
 
-
 	srv := &http.Server{
-		Addr: cfg.HTTPServer.Address,
-		Handler: router,
-		ReadTimeout: cfg.HTTPServer.Timeout,
+		Addr:         cfg.HTTPServer.Address,
+		Handler:      router,
+		ReadTimeout:  cfg.HTTPServer.Timeout,
 		WriteTimeout: cfg.HTTPServer.Timeout,
-		IdleTimeout: cfg.HTTPServer.IdleTimeout,
+		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
 	}
 
 	if err := srv.ListenAndServe(); err != nil {
