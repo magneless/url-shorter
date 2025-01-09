@@ -13,8 +13,8 @@ type Response struct {
 }
 
 const (
-	StatusOK    = "OK"
-	StatusError = "Error"
+	StatusOK       = "OK"
+	StatusError    = "Error"
 	StatusNotFound = "NotFound"
 )
 
@@ -34,7 +34,7 @@ func Error(msg string) Response {
 func NotFound(msg string) Response {
 	return Response{
 		Status: StatusNotFound,
-		Error: msg,
+		Error:  msg,
 	}
 }
 

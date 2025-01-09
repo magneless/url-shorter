@@ -72,16 +72,16 @@ func (s *Storage) GetURL(alias string) (string, error) {
 	SELECT url FROM url WHERE alias = ?
 	`)
 	if err != nil {
-		return "", fmt.Errorf("%s: %w", op, err)
+		return "", fmt.Errorf("%s: prepare statement: %w", op, err)
 	}
 
 	var resURL string
-	err = stmt.QueryRow(alias).Scan(resURL)
+	err = stmt.QueryRow(alias).Scan(&resURL)
 	if errors.Is(err, sql.ErrNoRows) {
 		return "", storage.ErrURLNotFound
 	}
 	if err != nil {
-		return "", fmt.Errorf("%s: %w", op, err)
+		return "", fmt.Errorf("%s: execute statement: %w", op, err)
 	}
 
 	return resURL, nil
