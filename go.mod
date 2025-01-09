@@ -8,7 +8,7 @@ require (
 	github.com/go-playground/validator/v10 v10.23.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/mattn/go-sqlite3 v1.14.24
-	github.com/stretchr/testify v1.10.0 // indirect
+	github.com/stretchr/testify v1.10.0
 )
 
 require (
