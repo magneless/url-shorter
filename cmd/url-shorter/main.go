@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/magneless/url-shorter/internal/config"
-	"github.com/magneless/url-shorter/internal/http-server/handlers/delete/deleteurl"
+	"github.com/magneless/url-shorter/internal/http-server/handlers/url/delete"
 	"github.com/magneless/url-shorter/internal/http-server/handlers/redirect"
 	"github.com/magneless/url-shorter/internal/http-server/handlers/url/save"
 	mwLogger "github.com/magneless/url-shorter/internal/http-server/middleware/logger"
